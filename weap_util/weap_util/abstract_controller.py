@@ -6,7 +6,7 @@ class AbstractController(ABC):
         pass
 
     @abstractmethod
-    def compute(obs: dict)->tuple[2 | 3]:
+    def compute(self, obs: dict)->tuple[2 | 3]:
         '''
         This should return the speed, steering angle, and optionally current set of waypoints to be rendered.
         NOTE if you do not want to provide a set of waypoints, return none for the third parameter.
