@@ -1,0 +1,16 @@
+image: track5.png
+map_path: '../maps/track5'
+map_ext: '.png'
+
+resolution: 0.022500
+origin: [-45, -32, 0.000000]
+
+# starting pose for map
+sx: 0
+sy: -2.6
+stheta: 0.2
+
+# reverse pose for map, uncomment if needed
+# sx: 0
+# sy: -2.6
+# stheta: 3.24

@@ -1,0 +1,16 @@
+image: track8.png
+map_path: '../maps/track8'
+map_ext: '.png'
+
+resolution: 0.022500
+origin: [0, -20, 0.000000]
+
+# starting pose for map
+sx: 1.1
+sy: 0.2
+stheta: 1.2
+
+# reverse pose for map, uncomment if needed
+# sx: 1.3
+# sy: 0.9
+# stheta: 4.7

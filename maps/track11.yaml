@@ -1,0 +1,12 @@
+image: track11.png
+resolution: 0.062500
+origin: [-78.21853769831466,-44.37590462453829, 0.000000]
+
+# map paths
+map_path: '../maps/track11'
+map_ext: '.png'
+
+# starting pose for map
+sx: 0.7
+sy: 0.0
+stheta: 1.37079632679

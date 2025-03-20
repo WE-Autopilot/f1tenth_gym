@@ -1,0 +1,18 @@
+# Very long
+
+image: track9.png
+map_path: '../maps/track9'
+map_ext: '.png'
+
+resolution: 0.052500
+origin: [-5, -5, 0.000000]
+
+# starting pose for map
+sx: -0.5
+sy: -0.45
+stheta: 5.65
+
+# reverse pose for map, uncomment if needed
+# sx: -0.5
+# sy: -0.45
+# stheta: 2.3
