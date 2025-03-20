@@ -1,11 +1,14 @@
 import time
 import yaml
+from argparse import Namespace
+
 import gym
 import numpy as np
-from argparse import Namespace
-from pyglet.gl import GL_POINTS, glPointSize
 from PIL import Image, ImageOps
+from pyglet.gl import GL_POINTS, glPointSize
 from f110_gym.envs.base_classes import Integrator
+
+from abstract_controller import AbstractController
 
 # todo: disable kill on collision
 
@@ -59,7 +62,7 @@ def _render_callback(env_renderer):
             rendered_waypoints.append(obj)
     # print("Render callback: waypoints drawn.")
 
-def run(model, config_path, render_on=True, invert_image=False, cam_follow_car=True, kill_on_collision=True):
+def run(model: AbstractController, config_path: str, render_on=True, invert_image=False, cam_follow_car=True, kill_on_collision=True):
     global _cam_follow_car 
     _cam_follow_car = cam_follow_car
 
