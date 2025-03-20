@@ -156,6 +156,12 @@ class F110Env(gym.Env):
         except:
             self.sim_car_fov = 2 * np.pi
 
+        # done on collide?
+        try:
+            self.done_on_collide = kwargs['done_on_collide']
+        except:
+            self.done_on_collide = True # default to true
+
         # radius to consider done
         self.start_thresh = 0.5  # 10cm
 
@@ -239,7 +245,10 @@ class F110Env(gym.Env):
             if self.toggle_list[i] < 4:
                 self.lap_times[i] = self.current_time
         
-        done = (self.collisions[self.ego_idx]) or np.all(self.toggle_list >= 4)
+        done = np.all(self.toggle_list >= 4)
+
+        if self.done_on_collide:
+            done = done or (self.collisions[self.ego_idx])
         
         return bool(done), self.toggle_list >= 4
 

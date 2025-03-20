@@ -1,0 +1,18 @@
+# DIFFICULTY: MAX
+
+image: track7.png
+map_path: '../maps/track7'
+map_ext: '.png'
+
+resolution: 0.1
+origin: [-30, -10, 0.000000]
+
+# starting pose for map
+sx: 0
+sy: 0.2
+stheta: 2.86
+
+# reverse pose for map, uncomment if needed
+sx: 0
+sy: 0.2
+stheta: 6
