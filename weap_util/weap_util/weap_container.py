@@ -1,3 +1,4 @@
+import os
 import time
 import yaml
 from argparse import Namespace
@@ -62,7 +63,15 @@ def _render_callback(env_renderer):
             rendered_waypoints.append(obj)
     # print("Render callback: waypoints drawn.")
 
-def run(model: AbstractController, config_path: str, render_on=True, invert_image=False, cam_follow_car=True, kill_on_collision=True):
+def run(model: AbstractController, config_path: str, config_name: str = None, render_on=True, invert_image=False, cam_follow_car=True, kill_on_collision=True):
+    """
+    If config_name is provided then config_path is interpreted as the directory in which
+    the config file lives. The final file name is built by appending either .yaml or .csv
+    (with a default to .yaml if neither exists) to config_name. Then, we pass this file path
+    to the map_path, set map_ext to .png, and override sx, sy, and stheta to 0.
+    
+    If config_name is None then config_path is treated as the full path to the YAML file.
+    """
     global _cam_follow_car 
     _cam_follow_car = cam_follow_car
 
@@ -74,10 +83,30 @@ def run(model: AbstractController, config_path: str, render_on=True, invert_imag
         Image.open = lambda *args, **kwargs: _orig_open(*args, **kwargs).convert("RGB").split()[0]
 
     global current_waypoints_global
-    # Load configuration from YAML.
-    with open(config_path) as file:
-        conf_dict = yaml.safe_load(file)
-    conf = Namespace(**conf_dict)
+
+    if config_name is None:
+        # Use the provided config_path as the full path to the YAML file.
+        with open(config_path) as file:
+            conf_dict = yaml.safe_load(file)
+        conf = Namespace(**conf_dict)
+    else:
+        # Construct the full path from the directory and file name (with .yaml or .csv extension)
+        candidate = None
+        for ext in ['.yaml', '.csv']:
+            candidate_candidate = os.path.join(config_path, config_name + ext)
+            if os.path.exists(candidate_candidate):
+                candidate = candidate_candidate
+                break
+        if candidate is None:
+            candidate = os.path.join(config_path, config_name + ".yaml")
+        # Override the config settings.
+        conf = Namespace(
+            map_path=candidate,
+            map_ext='.png',
+            sx=0,
+            sy=0,
+            stheta=0
+        )
 
     # Create the environment.
     env = gym.make('f110_gym:f110-v0',
