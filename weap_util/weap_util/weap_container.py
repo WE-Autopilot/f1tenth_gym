@@ -9,7 +9,7 @@ from PIL import Image, ImageOps
 from pyglet.gl import GL_POINTS, glPointSize
 from f110_gym.envs.base_classes import Integrator
 
-from abstract_controller import AbstractController
+from weap_util.abstract_controller import AbstractController
 
 # todo: disable kill on collision
 
@@ -90,18 +90,9 @@ def run(model: AbstractController, config_path: str, config_name: str = None, re
             conf_dict = yaml.safe_load(file)
         conf = Namespace(**conf_dict)
     else:
-        # Construct the full path from the directory and file name (with .yaml or .csv extension)
-        candidate = None
-        for ext in ['.yaml', '.csv']:
-            candidate_candidate = os.path.join(config_path, config_name + ext)
-            if os.path.exists(candidate_candidate):
-                candidate = candidate_candidate
-                break
-        if candidate is None:
-            candidate = os.path.join(config_path, config_name + ".yaml")
         # Override the config settings.
         conf = Namespace(
-            map_path=candidate,
+            map_path=config_path,
             map_ext='.png',
             sx=0,
             sy=0,
@@ -135,7 +126,9 @@ def run(model: AbstractController, config_path: str, config_name: str = None, re
 
     # Main simulation loop.
     while not done:
-        speed, steer, current_waypoints = model.compute(obs)
+        result = model.compute(obs)
+        speed, steer = result[:2]
+        current_waypoints = result[2] if len(result) >= 3 else None
         # Update the global variable for rendering.
         current_waypoints_global = current_waypoints
         obs, step_reward, done, info = env.step(np.array([[steer, speed]]))
