@@ -84,9 +84,10 @@ def run(model: AbstractController, config_path: str, config_name: str = None, re
 
     global current_waypoints_global
 
-    if config_name is None:
+    if config_name is not None:
         # Use the provided config_path as the full path to the YAML file.
-        with open(config_path) as file:
+        full_config_path = config_path+".yaml"
+        with open(full_config_path) as file:
             conf_dict = yaml.safe_load(file)
         conf = Namespace(**conf_dict)
     else:
@@ -96,13 +97,16 @@ def run(model: AbstractController, config_path: str, config_name: str = None, re
             map_ext='.png',
             sx=0,
             sy=0,
-            stheta=0
+            stheta=0 # 1.57079633 for up which is pi/2
         )
 
     # Create the environment.
     env = gym.make('f110_gym:f110-v0',
                    map=conf.map_path,
                    map_ext=conf.map_ext,
+                   sx=conf.sx,
+                   sy=conf.sy,
+                   stheta=conf.stheta,
                    num_agents=1,
                    timestep=0.01,
                    integrator=Integrator.RK4,
