@@ -1,15 +1,19 @@
 from abc import ABC, abstractmethod
 
-class AbstractController(ABC):
+class AbstractModel(ABC):
     @abstractmethod
-    def startup(self)->None:
+    def init(self)->None:
         pass
 
     @abstractmethod
-    def compute(self, obs: dict)->tuple[2 | 3]:
+    def eval(self, obs: dict, timestamp: int)-> tuple[float, float]:
         '''
         This should return the speed, steering angle, and optionally current set of waypoints to be rendered.
-        NOTE if you do not want to provide a set of waypoints, return none for the third parameter.
+
+        obs: the observation list from the lidar
+        timestamp: the time in milliseconds since the start of the run
+
+        returns: (speed, steering angle)
         '''
 
         pass
