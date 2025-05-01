@@ -3,7 +3,6 @@
 from weap_util.abstract_controller import AbstractModel
 from black_team_sal import SAL
 import torch as pt
-import numpy as np
 
 class Controller(AbstractModel):
         
@@ -30,10 +29,8 @@ class Controller(AbstractModel):
         action = dist.sample()
 
         [[steer, speed]] = action.tolist()
-        
-        scale = (1 - np.abs(np.clip(steer,np.pi/2, -np.pi/2)/(np.pi/2)))**2
-        
-        return 7, steer 
+
+        return speed*7, steer 
 
     def shutdown(self):
         pass
