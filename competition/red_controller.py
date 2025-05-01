@@ -1,13 +1,9 @@
-# red_controller.py
-
-import gym
-# Monkey-patch Box to restore the .shape property (needed by SB3 replay buffer)
-if not hasattr(gym.spaces.Box, "shape"):
-    gym.spaces.Box.shape = property(lambda self: self._shape)
-
 import os
 import numpy as np
 from weap_util.abstract_controller import AbstractModel
+import gym
+gym.__version__ = "0.21.0"   # lie to SB3 about the gym version
+gym.spaces.Box.shape = property(lambda self: self._shape)
 from stable_baselines3 import SAC
 
 class Controller(AbstractModel):
@@ -17,12 +13,10 @@ class Controller(AbstractModel):
         self.model_path = model_path
 
         self.sensor_angles = np.arange(-134.645, 134.645, 9.97370976287)
-        self.max_range     = 10.0
-        self.fov           = 4.7
-
+        self.max_range = 10.0
+        self.fov = 4.7
         print(self.model_path)
-        # Now SAC.load will find observation_space.shape correctly
-        self.model = SAC.load(self.model_path)
+        self.first_run = True
 
     def startup(self):
         print("LOL")
@@ -31,25 +25,30 @@ class Controller(AbstractModel):
     def init(self):
         pass
 
-    def eval(self, obs, timestamp=0):
+    def eval(self, obs, timestamp = 0):
         # pull out the 1080-beam scan
+        if(self.first_run):
+            self.model = SAC.load(self.model_path)
+            self.first_run = False
         scan = obs["scans"][0]
-        n    = len(scan)
+        n = len(scan)
         # interpolate down to your 27 angles
         scan_angles = np.linspace(-self.fov/2, self.fov/2, n)
-        desired     = np.linspace(-self.fov/2, self.fov/2, len(self.sensor_angles))
-        vals        = np.interp(desired, scan_angles, scan)
-        vals        = np.clip(vals, 0.0, self.max_range)
-
+        desired = np.linspace(-self.fov/2, self.fov/2, len(self.sensor_angles))
+        vals = np.interp(desired, scan_angles, scan)
+        vals = np.clip(vals, 0.0, self.max_range)
         speed = obs["linear_vels_x"][0] / 4.0
         speed = float(np.clip(speed, 0.0, 1.0))
-
         obs_vec = np.concatenate([vals, [speed]]).astype(np.float32)
-        action, _states = self.model.predict(obs_vec, deterministic=True)
-        steer, throttle = action
 
-        throttle = float(np.clip(throttle, 0.4, 2.0))
-        return throttle*7, float(steer)
+        action, _states = self.model.predict(obs_vec, deterministic=True)
+        throttle = action[1]
+        steer = action[0]
+
+
+        throttle = float(np.clip(throttle, 0.4, 10.0))
+
+        return throttle*3, float(steer)
 
     def shutdown(self):
         pass
