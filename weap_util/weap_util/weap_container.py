@@ -9,7 +9,7 @@ from PIL import Image, ImageOps
 from pyglet.gl import GL_POINTS, glPointSize
 from f110_gym.envs.base_classes import Integrator
 
-from weap_util.abstract_controller import AbstractController
+from weap_util.abstract_controller import AbstractModel
 
 # todo: disable kill on collision
 
@@ -63,7 +63,7 @@ def _render_callback(env_renderer):
             rendered_waypoints.append(obj)
     # print("Render callback: waypoints drawn.")
 
-def run(model: AbstractController, config_path: str, config_name: str = None, render_on=True, invert_image=False, cam_follow_car=True, kill_on_collision=True):
+def run(model: AbstractModel, config_path: str, config_name: str = None, render_on=True, invert_image=False, cam_follow_car=True, kill_on_collision=True):
     """
     If config_name is provided then config_path is interpreted as the directory in which
     the config file lives. The final file name is built by appending either .yaml or .csv
@@ -130,7 +130,7 @@ def run(model: AbstractController, config_path: str, config_name: str = None, re
 
     # Main simulation loop.
     while not done:
-        result = model.compute(obs)
+        result = model.eval(obs)
         speed, steer = result[:2]
         current_waypoints = result[2] if len(result) >= 3 else None
         # Update the global variable for rendering.
