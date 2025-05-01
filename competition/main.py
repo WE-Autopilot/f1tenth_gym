@@ -1,10 +1,10 @@
-from black_controller import Controller
-
+from black_controller import Controller as BlackController
+from red_controller import Controller as RedController
 from weap_util.weap_container import run
 
 def main():
-    controller = Controller()
-    run(controller, "maps/map2","map2")
+    controller = RedController()
+    run(controller, "maps/map26","map26")
 
 if __name__ == "__main__":
     main()
