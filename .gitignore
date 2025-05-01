@@ -21,3 +21,4 @@ gym/f110_gym/unittest/centerline/
 gym/f110_gym.egg-info
 flycheck_*
 
+competition/*.ckpt
